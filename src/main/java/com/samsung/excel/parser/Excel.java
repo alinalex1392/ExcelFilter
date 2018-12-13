@@ -1,3 +1,8 @@
+package com.samsung.excel.parser;
+
+import com.cookingfox.guava_preconditions.Preconditions;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,15 +15,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class First {
+@Data
+@Slf4j
+public class Excel {
 
 
     private static final List<String> columnsWanted = Arrays.asList("Service_order", "Column 3");
     private static final Map<Integer, List<Cell>> ROW_LIST_MAP = new HashMap<Integer, List<Cell>>();
-
-    private static final String FILENAME = "SEROM.XLSX";
-
-
 
     private static XSSFRow row;
     //    private static List<Pair<Integer, Cell>> headers = new ArrayList<Pair<Integer, Cell>>();
@@ -26,27 +29,18 @@ public class First {
 
     private static Map<Row, List<Cell>> excel = new HashMap<Row, List<Cell>>();
 
-
-    public static void main(String[] args) {
-
-
-        try {
-            readFile();
-
-        } catch (IOException ex) {
-            System.out.println("File not found.");
-        }
-
+    public Excel() {
     }
 
-    private static void readFile() throws IOException {
-        File file = new File(First.class.getClassLoader().getResource(FILENAME).getFile());
-//        File file = new File("C:\\Users\\mircea.chesca\\Desktop\\PendingWithJava\\SEROM.XLSX");
+    void parseFile(File file) throws IOException {
+
+        Preconditions.checkNotNull(file, "File cannot be null while parsing");
+
+        log.info("Started parsing input file ");
+
         FileInputStream fileInput = new FileInputStream(file);
+
         XSSFWorkbook workbook = new XSSFWorkbook(fileInput);
-
-        fileInput.close();
-
 
         if (file.isFile() && file.exists()) {
             System.out.println("Raw data file open successfully.");
@@ -98,7 +92,7 @@ public class First {
 
         for (Row row : spreadsheet) {
             for (Cell cell : row) {
-                if (headers.indexOf(cell) ==  row.cellIterator().next().getColumnIndex()) {
+                if (headers.indexOf(cell) == row.cellIterator().next().getColumnIndex()) {
                     ArrayList<Cell> excelRows = new ArrayList<Cell>();
                     excelRows.add(cell);
 
@@ -171,10 +165,10 @@ public class First {
             }
             System.out.println();
         }
-//        fileInput.close();
+        fileInput.close();
     }
+
+
+
 }
-
-
-
 

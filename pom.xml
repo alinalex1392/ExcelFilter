@@ -39,12 +39,30 @@
             <artifactId>poi-scratchpad</artifactId>
             <version>4.0.0</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hbase</groupId>-->
+            <!--<artifactId>hbase-endpoint</artifactId>-->
+            <!--<version>2.1.1</version>-->
+        <!--</dependency>-->
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.16</version>
+                <scope>provided</scope>
+            </dependency>
+
         <dependency>
-            <groupId>org.apache.hbase</groupId>
-            <artifactId>hbase-endpoint</artifactId>
-            <version>2.1.1</version>
+            <groupId>com.cookingfox</groupId>
+            <artifactId>guava-preconditions</artifactId>
+            <version>0.1.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
 
     </dependencies>
 
