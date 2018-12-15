@@ -1,6 +1,7 @@
 package com.samsung.excel.parser;
 
 import com.cookingfox.guava_preconditions.Preconditions;
+import com.samsung.excel.util.ExcelUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,52 +21,43 @@ import java.util.*;
 public class Excel {
 
 
-    private static final List<String> columnsWanted = Arrays.asList("Service_order", "Column 3");
     private static final Map<Integer, List<Cell>> ROW_LIST_MAP = new HashMap<Integer, List<Cell>>();
 
     private static XSSFRow row;
-    //    private static List<Pair<Integer, Cell>> headers = new ArrayList<Pair<Integer, Cell>>();
-    private static List<Cell> headers = new ArrayList<Cell>();
+    //    private static List<Pair<Integer, Cell>> actualHeaders = new ArrayList<Pair<Integer, Cell>>();
+    private static List<Cell> actualHeaders;
 
     private static Map<Row, List<Cell>> excel = new HashMap<Row, List<Cell>>();
 
     public Excel() {
     }
 
-    void parseFile(File file) throws IOException {
+    public void parseFile(File file) throws IOException {
 
         Preconditions.checkNotNull(file, "File cannot be null while parsing");
 
         log.info("Started parsing input file ");
 
-        FileInputStream fileInput = new FileInputStream(file);
+        XSSFWorkbook workbook;
 
-        XSSFWorkbook workbook = new XSSFWorkbook(fileInput);
+        try (FileInputStream fileInput = new FileInputStream(file)) {
 
-        if (file.isFile() && file.exists()) {
-            System.out.println("Raw data file open successfully.");
-        } else {
-            System.out.println("Error to open raw data file.");
+            workbook = new XSSFWorkbook(fileInput);
         }
 
-        XSSFSheet spreadsheet = workbook.getSheetAt(0);
-        Iterator<Row> rowIterator = spreadsheet.iterator();
+
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+        Iterator<Row> rowIterator = sheet.iterator();
 
 
         Row header = rowIterator.next();
 
-        for (Cell cell : header) {
+        List<Cell> actualHeaders = ExcelUtil.getRequiredHeaders(header);
 
-//            System.out.println("Cell number: " + cell.getColumnIndex() + " value: " +
-//                    cell.getStringCellValue());
-            if (columnsWanted.contains(cell.getStringCellValue())) {
-                headers.add(cell);
-            }
-        }
+        System.out.println(" Actual actualHeaders");
 
-        System.out.println(" Actual headers");
-
-        for (Cell cell : headers) {
+        for (Cell cell : actualHeaders) {
 
             System.out.println(cell.getStringCellValue());
 
@@ -79,7 +71,7 @@ public class Excel {
             Row next = rowIterator.next();
             ROW_LIST_MAP.put(next.getRowNum(), new ArrayList<Cell>());
 
-            for (Cell actualHeader : headers) {
+            for (Cell actualHeader : actualHeaders) {
                 ROW_LIST_MAP.get(next.getRowNum()).add(next.getCell(actualHeader.getColumnIndex()));
 //                ROW_LIST_MAP.put(next.getRowNum(), rowIterator.hasNext(actualHeader.getColumnIndex()));
 
@@ -90,29 +82,15 @@ public class Excel {
         }
 //        aici filtreaza ROW_LIST_MAP ca sa contina doar randurile dorite
 
-        for (Row row : spreadsheet) {
+        for (Row row : sheet) {
             for (Cell cell : row) {
-                if (headers.indexOf(cell) == row.cellIterator().next().getColumnIndex()) {
+                if (actualHeaders.indexOf(cell) == row.cellIterator().next().getColumnIndex()) {
                     ArrayList<Cell> excelRows = new ArrayList<Cell>();
                     excelRows.add(cell);
 
                 }
             }
         }
-
-
-//      finish 1
-
-
-        System.exit(0);
-
-
-//        spreadsheet.createFreezePane(0, 1);
-
-//        for (int i = 1; i < 200; i++) {
-//            spreadsheet.autoSizeColumn(i);
-//        }
-
 
         while (rowIterator.hasNext()) {
 
@@ -165,9 +143,7 @@ public class Excel {
             }
             System.out.println();
         }
-        fileInput.close();
     }
-
 
 
 }
