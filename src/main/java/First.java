@@ -31,6 +31,7 @@ public class First {
 
         } catch (IOException ex) {
             System.out.println("File not found.");
+            System.out.println("Input file.");
         }
 
     }
