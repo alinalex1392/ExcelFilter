@@ -1,26 +1,19 @@
 import com.samsung.excel.parser.Excel;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class First {
 
+//    private static final List<String> columnsWanted = Arrays.asList("Service_order", "Column 3");
+//    private static final Map<Integer, List<Cell>> ROW_LIST_MAP = new HashMap<>();
+//    private static XSSFRow row;
+//    //    private static List<Pair<Integer, Cell>> headers = new ArrayList<Pair<Integer, Cell>>();
+//    private static List<Cell> headers = new ArrayList<Cell>();
+//    private static Map<Row, List<Cell>> excel = new HashMap<Row, List<Cell>>();
 
-    private static final List<String> columnsWanted = Arrays.asList("Service_order", "Column 3");
-    private static final Map<Integer, List<Cell>> ROW_LIST_MAP = new HashMap<Integer, List<Cell>>();
 
     private static final String FILENAME = "SEROM.XLSX";
-
-    private static XSSFRow row;
-    //    private static List<Pair<Integer, Cell>> headers = new ArrayList<Pair<Integer, Cell>>();
-    private static List<Cell> headers = new ArrayList<Cell>();
-
-    private static Map<Row, List<Cell>> excel = new HashMap<Row, List<Cell>>();
-
     private Excel excelObject = new Excel();
 
     public static void main(String[] args) {
@@ -31,20 +24,14 @@ public class First {
 
         } catch (IOException ex) {
             System.out.println("File not found.");
-
-            System.out.println("Input.");
-
         }
 
     }
 
     private static void readFile() throws IOException {
 
-
         First mainObject = new First();
-
-        File file = new File(First.class.getClassLoader().getResource(FILENAME).getFile());
-
+        File file = new File(Objects.requireNonNull(First.class.getClassLoader().getResource(FILENAME)).getFile());
         mainObject.excelObject.parseFile(file);
 
 
@@ -181,7 +168,3 @@ public class First {
 ////        fileInput.close();
     }
 }
-
-
-
-
