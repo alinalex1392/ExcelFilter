@@ -1,9 +1,10 @@
 package com.samsung.excel.parser;
 
 import com.cookingfox.guava_preconditions.Preconditions;
+import com.samsung.excel.util.ExcelException;
+import com.samsung.excel.util.ExcelHeaderEnum;
 import com.samsung.excel.util.ExcelUtil;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -13,14 +14,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Data
-@Slf4j
 public class Excel {
-    //    private static List<Pair<Integer, Cell>> actualHeaders = new ArrayList<Pair<Integer, Cell>>();
 
-    private static final Map<Integer, ArrayList<Cell>> ROW_LIST_MAP = new HashMap<>();
+    private static final Map<String, List<Row>> excel_by_service_name = new HashMap<>();
     private static XSSFRow row;
     private static ArrayList<Cell> actualHeaders;
     private static Map<Row, List<Cell>> excel = new HashMap<>();
@@ -32,10 +32,9 @@ public class Excel {
     public void parseFile(File file) throws IOException {
 
         Preconditions.checkNotNull(file, "File cannot be null while parsing");
-        log.info("Started parsing input file ");
         XSSFWorkbook workbook;
 
-        try (FileInputStream fileInput = new FileInputStream(file)) {
+        try (InputStream fileInput = new FileInputStream(file)) {
             workbook = new XSSFWorkbook(fileInput);
         }
 
@@ -44,30 +43,33 @@ public class Excel {
         Iterator<Row> rowIterator = sheet.iterator();
         Row header = rowIterator.next();
         List<Cell> actualHeaders = ExcelUtil.getRequiredHeaders(header);
-        ROW_LIST_MAP.put(0, (ArrayList<Cell>) actualHeaders);
+
         System.out.println(" Actual actualHeaders");
 
-//        actualHeaders.forEach(System.out::println);
+        actualHeaders.forEach(System.out::println);
 
-//        for (Cell cell : actualHeaders) {
-//            System.out.println(cell.getStringCellValue());
-//
-//        }
+        for (Cell cell : actualHeaders) {
+            System.out.println(cell.getStringCellValue());
+
+        }
+
+        Cell requiredExcelHeader = getRequiredExcelHeader(actualHeaders, ExcelHeaderEnum.SERVICE_TYPE.getHeaderName());
+
 
 //       1. pentru toate celulele executa asta
         while (rowIterator.hasNext()) {
 
-            Row next = rowIterator.next();
-            ROW_LIST_MAP.put(next.getRowNum(), new ArrayList<>());
+            Row row = rowIterator.next();
 
-            for (Cell actualHeader : actualHeaders) {
-                ROW_LIST_MAP.get(next.getRowNum()).add(next.getCell(actualHeader.getColumnIndex()));
-//               ROW_LIST_MAP.put(next.getRowNum(), rowIterator.hasNext(actualHeader.getColumnIndex()));
-//               ROW_LIST_MAP.put(next.getRowNum(), next.getCell(actualHeader.getColumnIndex()));
+            for (Cell cellFromRow : row) {
+
+                if (cellFromRow.getColumnIndex() == requiredExcelHeader.getColumnIndex()) {
+                    populateExcelMap(cellFromRow.getStringCellValue(), row);
+                }
             }
         }
-//        aici filtreaza ROW_LIST_MAP ca sa contina doar randurile dorite
-        ROW_LIST_MAP.forEach((key, value) -> System.out.println(key + "\t"  + value));
+
+        System.out.println("Excel Parsed");
 
 //        while (rowIterator.hasNext()) {
 //
@@ -120,6 +122,29 @@ public class Excel {
 //            }
 //            System.out.println();
 //        }
+    }
+
+    private void populateExcelMap(String stringCellValue, Row row) {
+
+        if (excel_by_service_name.containsKey(stringCellValue)) {
+            excel_by_service_name.get(stringCellValue).add(row);
+        } else {
+
+            List<Row> rowsByServiceName = new ArrayList<>();
+            rowsByServiceName.add(row);
+            excel_by_service_name.put(stringCellValue, rowsByServiceName);
+        }
+    }
+
+
+    public Cell getRequiredExcelHeader(List<Cell> headers, String headerValue) {
+        Optional<Cell> requiredHeaderByName = ExcelUtil.getRequiredHeaderByName(headers, headerValue);
+
+        if (requiredHeaderByName.isPresent()) {
+            return requiredHeaderByName.get();
+        }
+
+        throw new ExcelException("Value " + headerValue + " not found in the header cannot proceed with parsing");
     }
 
 

@@ -7,11 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public enum ExcelHeadersEnum {
+public enum ExcelHeaderEnum {
 
-    //TODO aici Mircea trebuie sa pui ce headere iti doresti
-    // si de asemenea cu ce valori vrei sa fie populate coloanele
-    // respective deoarece ai zis ca faci o filtrare pe coloane in functie de nu stiu ce buisness bla bla
+    //TODO sterge a doua coloana cea cu Collections.singletonList la toate si dupa si variabila      private List<String> acceptedValues;
+    // pe unde o vezi
     Service_order("Service_order", Collections.singletonList("Service_order")),
     HEADER2("HQ aging base date", Collections.singletonList("HQ aging base date")),
     PENDING_DAYS("PENDING_DAYS", Collections.singletonList("PENDING_DAYS")),
@@ -28,7 +27,7 @@ public enum ExcelHeadersEnum {
     HEADER14("Engineer code", Collections.singletonList("Engineer code")),
     HEADER15("Engineer name", Collections.singletonList("Engineer name")),
     ASC_JOB_NO("ASC_JOB_NO", Collections.singletonList("ASC_JOB_NO")),
-    MODEL("MODEL",Collections.singletonList("MODEL")),
+    MODEL("MODEL", Collections.singletonList("MODEL")),
     CIC_PRD("CIC_PRD", Collections.singletonList("CIC_PRD")),
     INOUTWTY("INOUTWTY", Collections.singletonList("INOUTWTY")),
     DEFECT_DESC("DEFECT_DESC", Collections.singletonList("DEFECT_DESC")),
@@ -78,19 +77,15 @@ public enum ExcelHeadersEnum {
     private String headerName;
     private List<String> acceptedValues;
 
-    ExcelHeadersEnum(String header) {
-        this.headerName = header;
-    }
-
-    ExcelHeadersEnum(String header, List<String> acceptedValues) {
+    ExcelHeaderEnum(String header, List<String> acceptedValues) {
         this.headerName = header;
         this.acceptedValues = acceptedValues;
     }
 
     public static List<String> getAllHeadersName() {
 
-        return Arrays.stream(ExcelHeadersEnum.values())
-                .map(excelHeadersEnum -> excelHeadersEnum.headerName)
+        return Arrays.stream(ExcelHeaderEnum.values())
+                .map(excelHeaderEnum -> excelHeaderEnum.headerName)
                 .collect(Collectors.toList());
     }
 
@@ -98,13 +93,17 @@ public enum ExcelHeadersEnum {
 
         Preconditions.checkNotNull(headerName, "Header Name cannot be null");
 
-        ExcelHeadersEnum excelHeadersEnum1 = ExcelHeadersEnum.valueOf(headerName);
+        ExcelHeaderEnum excelHeaderEnum1 = ExcelHeaderEnum.valueOf(headerName);
 
 
-        Preconditions.checkNotNull(excelHeadersEnum1,
-                "Value of headerName need to be in ExcelHeadersEnum ");
+        Preconditions.checkNotNull(excelHeaderEnum1,
+                "Value of headerName need to be in ExcelHeaderEnum ");
 
-        return excelHeadersEnum1.getAcceptedValues();
+        return excelHeaderEnum1.getAcceptedValues();
+    }
+
+    public String getHeaderName() {
+        return headerName;
     }
 
     public List<String> getAcceptedValues() {

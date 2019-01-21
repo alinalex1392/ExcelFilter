@@ -5,10 +5,11 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ExcelUtil {
 
-    private static final List<String> headersWanted = ExcelHeadersEnum.getAllHeadersName();
+    private static final List<String> headersWanted = ExcelHeaderEnum.getAllHeadersName();
 
     public static List<Cell> getRequiredHeaders(Row header) {
 
@@ -20,5 +21,17 @@ public class ExcelUtil {
             }
         }
         return actualHeaders;
+    }
+
+    public static Optional<Cell> getRequiredHeaderByName(List<Cell> header, String headerName) {
+
+        for (Cell headerCell : header) {
+
+            if (headerCell.getStringCellValue().equals(headerName)) {
+                return Optional.of(headerCell);
+            }
+        }
+
+        return Optional.empty();
     }
 }
