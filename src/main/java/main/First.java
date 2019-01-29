@@ -1,3 +1,6 @@
+package main;
+
+
 import com.samsung.excel.parser.Excel;
 
 import java.io.File;
@@ -6,8 +9,9 @@ import java.util.Objects;
 
 public class First {
 
-    private static final String FILENAME = "SEROM.XLSX";
-    private static final String TestFILENAME = "SEROMTest.XLSX";
+    public static final String FILENAME = "SEROM.XLSX";
+    public static final String TestFILENAME = "SEROMTest.XLSX";
+    public static final String SAMPLE_MIRCEA = "SampleDataMircea.XLSX";
     private Excel excelObject = new Excel();
 
     public static void main(String[] args) {

@@ -5,26 +5,30 @@ import com.samsung.excel.util.ExcelException;
 import com.samsung.excel.util.ExcelHeaderEnum;
 import com.samsung.excel.util.ExcelUtil;
 import lombok.Data;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 @Data
 public class Excel {
 
     private static final Map<String, List<Row>> excel_by_service_name = new HashMap<>();
+    private static final String PIVOT1 = "Pivot1";
     private static XSSFRow row;
     private static ArrayList<Cell> actualHeaders;
     private static Map<Row, List<Cell>> excel = new HashMap<>();
     private static Map<String, ArrayList<Row>> SO_BY_PARTNER = new HashMap<>();
+    private List<Cell> actualHeaders1;
 
     public Excel() {
     }
@@ -38,36 +42,52 @@ public class Excel {
             workbook = new XSSFWorkbook(fileInput);
         }
 
+        createSheetForPivots(workbook);
+
 
         XSSFSheet sheet = workbook.getSheetAt(0);
+        XSSFSheet pivotSheet = workbook.getSheetAt(1);
+
+
         Iterator<Row> rowIterator = sheet.iterator();
         Row header = rowIterator.next();
-        List<Cell> actualHeaders = ExcelUtil.getRequiredHeaders(header);
+        actualHeaders1 = ExcelUtil.getRequiredHeaders(header);
 
         System.out.println(" Actual actualHeaders");
 
-        actualHeaders.forEach(System.out::println);
+        actualHeaders1.forEach(System.out::println);
 
-        for (Cell cell : actualHeaders) {
+        for (Cell cell : actualHeaders1) {
             System.out.println(cell.getStringCellValue());
 
         }
 
-        Cell requiredExcelHeader = getRequiredExcelHeader(actualHeaders, ExcelHeaderEnum.SERVICE_TYPE.getHeaderName());
 
+        createPivot(sheet, pivotSheet);
 
-//       1. pentru toate celulele executa asta
-        while (rowIterator.hasNext()) {
-
-            Row row = rowIterator.next();
-
-            for (Cell cellFromRow : row) {
-
-                if (cellFromRow.getColumnIndex() == requiredExcelHeader.getColumnIndex()) {
-                    populateExcelMap(cellFromRow.getStringCellValue(), row);
-                }
-            }
+        try (FileOutputStream fileOutputStream = new FileOutputStream("TestExample.xlsx", false)) {
+            workbook.write(fileOutputStream);
         }
+
+//        try (FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/ExcelPivot.xlsx", false)) {
+//            workbook.write(fileOutputStream);
+//        }
+//
+//        Cell requiredExcelHeader = getRequiredExcelHeader(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE.getHeaderName());
+//
+//
+////       build a map that keys are SERVICE TYPE
+//        while (rowIterator.hasNext()) {
+//
+//            Row row = rowIterator.next();
+//
+//            for (Cell cellFromRow : row) {
+//
+//                if (cellFromRow.getColumnIndex() == requiredExcelHeader.getColumnIndex()) {
+//                    populateExcelMap(cellFromRow.getStringCellValue(), row);
+//                }
+//            }
+//        }
 
         System.out.println("Excel Parsed");
 
@@ -123,6 +143,47 @@ public class Excel {
 //            System.out.println();
 //        }
     }
+
+    private void createSheetForPivots(XSSFWorkbook workbook) {
+        workbook.createSheet(PIVOT1);
+    }
+
+    private void createPivot(XSSFSheet sheet, XSSFSheet pivotSheet) {
+
+        CellReference position = new CellReference(0, 0);
+
+//        AreaReference areaReference = new AreaReference(position,
+//                new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
+
+        AreaReference areaReference = new AreaReference(position,
+                new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
+
+
+        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(areaReference, position, sheet);
+//        XSSFPivotTable pivotTable = sheet.createPivotTable(areaReference, new CellReference(sheet.getLastRowNum() + 10, 1));
+
+        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE));
+//        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
+//        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.REASON_TEXT));
+
+        pivotTable.addColLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.PENDING_DAYS));
+
+
+        pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.Service_order));
+
+//        pivotTable.addReportFilter(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
+
+    }
+
+    private int getColumnIndexOf(List<Cell> actualHeaders1, ExcelHeaderEnum serviceType) {
+        Optional<Cell> first = actualHeaders1.stream()
+                .filter(cell -> cell.getStringCellValue().equals(serviceType.getHeaderName()))
+                .findFirst();
+
+
+        return first.map(Cell::getColumnIndex).orElse(-1);
+    }
+
 
     private void populateExcelMap(String stringCellValue, Row row) {
 
