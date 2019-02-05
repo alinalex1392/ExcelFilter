@@ -29,7 +29,7 @@ public class First {
     private static void readFile() throws IOException {
 
         First mainObject = new First();
-        File file = new File(Objects.requireNonNull(First.class.getClassLoader().getResource(TestFILENAME)).getFile());
+        File file = new File(Objects.requireNonNull(First.class.getClassLoader().getResource(FILENAME)).getFile());
         mainObject.excelObject.parseFile(file);
 
 
