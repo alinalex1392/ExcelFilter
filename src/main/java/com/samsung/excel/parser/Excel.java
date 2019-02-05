@@ -163,13 +163,22 @@ public class Excel {
 //        XSSFPivotTable pivotTable = sheet.createPivotTable(areaReference, new CellReference(sheet.getLastRowNum() + 10, 1));
 
         pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE));
+        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.HEADER13));
+        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.STATUS_TEXT));
+        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.REASON_TEXT));
 //        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
 //        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.REASON_TEXT));
 
+//        ExcelHeaderEnum.PENDING_DAYS.getAcceptedValues().sort(Comparator.reverseOrder());
+
         pivotTable.addColLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.PENDING_DAYS));
+//        pivotTable.getColLabelColumns().stream().sorted();
+
+        sortAscending(ExcelHeaderEnum.PENDING_DAYS.getAcceptedValues(), ExcelHeaderEnum.PENDING_DAYS);
 
 
         pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.Service_order));
+
 
 //        pivotTable.addReportFilter(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
 
@@ -206,6 +215,11 @@ public class Excel {
         }
 
         throw new ExcelException("Value " + headerValue + " not found in the header cannot proceed with parsing");
+    }
+
+    public void sortAscending(List<String> pendingDays, ExcelHeaderEnum days) {
+        pendingDays.stream().sorted((o1, o2) -> Integer.valueOf(o2) - Integer.valueOf(o1));
+
     }
 
 
