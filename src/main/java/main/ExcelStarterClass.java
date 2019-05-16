@@ -1,18 +1,19 @@
 package main;
 
 
-import com.samsung.excel.parser.Excel;
+import com.samsung.excel.parser.ExcelParser;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class First {
+public class ExcelStarterClass {
 
     public static final String FILENAME = "SEROM.XLSX";
     public static final String TestFILENAME = "SEROMTest.XLSX";
+    public static final String TestFILENAME1 = "SEROM_Pending_Mar14_1750.xlsx";
     public static final String SAMPLE_MIRCEA = "SampleDataMircea.XLSX";
-    private Excel excelObject = new Excel();
+    private ExcelParser excelParserObject = new ExcelParser();
 
     public static void main(String[] args) {
 
@@ -28,9 +29,11 @@ public class First {
 
     private static void readFile() throws IOException {
 
-        First mainObject = new First();
-        File file = new File(Objects.requireNonNull(First.class.getClassLoader().getResource(FILENAME)).getFile());
-        mainObject.excelObject.parseFile(file);
+        ExcelStarterClass starterClass = new ExcelStarterClass();
+
+        File file = new File(Objects.requireNonNull(ExcelStarterClass.class.getClassLoader().getResource(SAMPLE_MIRCEA)).getFile());
+
+        starterClass.getExcelParserObject().processFile(file);
 
 
 //        File file = new File("C:\\Users\\mircea.chesca\\Desktop\\PendingWithJava\\SEROM.XLSX");
@@ -165,4 +168,9 @@ public class First {
 //        }
 ////        fileInput.close();
     }
+
+    public ExcelParser getExcelParserObject(){
+        return excelParserObject;
+    }
+
 }

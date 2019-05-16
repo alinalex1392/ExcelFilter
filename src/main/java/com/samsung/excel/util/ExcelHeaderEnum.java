@@ -26,7 +26,7 @@ public enum ExcelHeaderEnum {
     REASON_TEXT("REASON_TEXT", Collections.singletonList("REASON_TEXT")),
     REASON_AGING("REASON_AGING", Collections.singletonList("REASON_AGING")),
     HEADER12("ASC code", Collections.singletonList("ASC code")),
-    HEADER13("ASC name", Collections.singletonList("ASC name")),
+    ASC_NAME("ASC name", Collections.singletonList("ASC name")),
     HEADER14("Engineer code", Collections.singletonList("Engineer code")),
     HEADER15("Engineer name", Collections.singletonList("Engineer name")),
     ASC_JOB_NO("ASC_JOB_NO", Collections.singletonList("ASC_JOB_NO")),

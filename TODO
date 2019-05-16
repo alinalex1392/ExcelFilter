@@ -1,0 +1,3 @@
+1. Stream the whole file and filter it . For pivot you need the whole file so you gonna load only the filtered excel now , not the whole one so this is an optimization
+2. Creating pivot index problem
+3. Create a jar and make the file to be loaded from the outside

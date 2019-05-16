@@ -1,14 +1,13 @@
 package com.samsung.excel.parser;
 
 import com.cookingfox.guava_preconditions.Preconditions;
+import com.samsung.excel.filter.ExcelFilterUtil;
 import com.samsung.excel.util.ExcelException;
 import com.samsung.excel.util.ExcelHeaderEnum;
 import com.samsung.excel.util.ExcelUtil;
 import lombok.Data;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataConsolidateFunction;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
@@ -20,22 +19,24 @@ import java.io.*;
 import java.util.*;
 
 @Data
-public class Excel {
+public class ExcelParser {
 
     private static final Map<String, List<Row>> excel_by_service_name = new HashMap<>();
     private static final String PIVOT1 = "Pivot1";
     private static XSSFRow row;
-    private static ArrayList<Cell> actualHeaders;
     private static Map<Row, List<Cell>> excel = new HashMap<>();
     private static Map<String, ArrayList<Row>> SO_BY_PARTNER = new HashMap<>();
     private List<Cell> actualHeaders1;
+    private ExcelFilterUtil excelFilterUtil = new ExcelFilterUtil();
 
-    public Excel() {
+
+    public ExcelParser() {
     }
 
-    public void parseFile(File file) throws IOException {
+    public void processFile(File file) throws IOException {
 
         Preconditions.checkNotNull(file, "File cannot be null while parsing");
+
         XSSFWorkbook workbook;
 
         try (InputStream fileInput = new FileInputStream(file)) {
@@ -45,15 +46,27 @@ public class Excel {
         createSheetForPivots(workbook);
 
 
-        XSSFSheet sheet = workbook.getSheetAt(0);
+        XSSFSheet mainSheet = workbook.getSheetAt(0);
         XSSFSheet pivotSheet = workbook.getSheetAt(1);
 
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        Iterator<Row> rowIterator = mainSheet.iterator();
+
         Row header = rowIterator.next();
+
         actualHeaders1 = ExcelUtil.getRequiredHeaders(header);
 
-        System.out.println(" Actual actualHeaders");
+
+//        ******************Filter the sheet by some criteria
+
+        Map<Integer, List<String>> filterMap = ExcelUtil.getFilterMap(actualHeaders1);
+
+        excelFilterUtil.eraseRows(mainSheet, filterMap);
+
+        excelFilterUtil.writeSheetToSpecificFile(workbook, "SheetFiltered");
+
+
+        System.out.println("########### Actual actualHeaders################");
 
         actualHeaders1.forEach(System.out::println);
 
@@ -63,11 +76,14 @@ public class Excel {
         }
 
 
-        createPivot(sheet, pivotSheet);
+        createPivot(mainSheet, pivotSheet);
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream("TestExample.xlsx", false)) {
-            workbook.write(fileOutputStream);
-        }
+//        try (FileOutputStream fileOutputStream = new FileOutputStream("TestExample.xlsx", false)) {
+//            workbook.write(fileOutputStream);
+//        }
+        excelFilterUtil.writeSheetToSpecificFile(workbook, "TestExample.xlsx");
+
+
 
 //        try (FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/ExcelPivot.xlsx", false)) {
 //            workbook.write(fileOutputStream);
@@ -89,7 +105,7 @@ public class Excel {
 //            }
 //        }
 
-        System.out.println("Excel Parsed");
+        System.out.println("#################### ExcelParser Parsed ##################");
 
 //        while (rowIterator.hasNext()) {
 //
@@ -144,7 +160,7 @@ public class Excel {
 //        }
     }
 
-    private void createSheetForPivots(XSSFWorkbook workbook) {
+    private void createSheetForPivots(Workbook workbook) {
         workbook.createSheet(PIVOT1);
     }
 
@@ -155,6 +171,8 @@ public class Excel {
 //        AreaReference areaReference = new AreaReference(position,
 //                new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
 
+
+//        TODO actualHeaders1.size() needs to be the maximum cell index position not the size
         AreaReference areaReference = new AreaReference(position,
                 new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
 
@@ -162,8 +180,8 @@ public class Excel {
         XSSFPivotTable pivotTable = pivotSheet.createPivotTable(areaReference, position, sheet);
 //        XSSFPivotTable pivotTable = sheet.createPivotTable(areaReference, new CellReference(sheet.getLastRowNum() + 10, 1));
 
+        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.ASC_NAME));
         pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE));
-        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.HEADER13));
         pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.STATUS_TEXT));
         pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.REASON_TEXT));
 //        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
@@ -174,7 +192,7 @@ public class Excel {
         pivotTable.addColLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.PENDING_DAYS));
 //        pivotTable.getColLabelColumns().stream().sorted();
 
-        sortAscending(ExcelHeaderEnum.PENDING_DAYS.getAcceptedValues(), ExcelHeaderEnum.PENDING_DAYS);
+//        sortAscending(ExcelHeaderEnum.PENDING_DAYS.getAcceptedValues(), ExcelHeaderEnum.PENDING_DAYS);
 
 
         pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.Service_order));
