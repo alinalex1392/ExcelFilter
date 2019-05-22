@@ -1,0 +1,104 @@
+
+Pivot 1 ("PendingStatus(IW)")
+
+filters
+INOUTWTY - "OW", "NA"
+SERVICE_TYPE - "RH", "AD", "SR"
+CIC_PRD - "WSM", "HKE", "REF", "VDE", "MON", "ACN", " CLE", "VEE" 
+
+
+--pivot
+.addColLabel  : PENDING_DAYS
+.addRowLabel  : ASC_NAME, SERVICE_TYPE, STATUS_TEXT, REASON_TEXT
+.addColumnLabel  : Service_order
+
+
+
+
+
+
+Pivot 2 ("PendingStatus(IW-NONHHP CI+PS)")
+
+filters
+INOUTWTY - "OW", "NA"
+SERVICE_TYPE - "RH", "AD", "SR", "IH"
+CIC_PRD - "HHP"
+
+
+--pivot
+.addColLabel  : PENDING_DAYS
+.addRowLabel  : ASC_NAME, SERVICE_TYPE, STATUS_TEXT, REASON_TEXT
+.addColumnLabel  : Service_order
+
+
+
+
+
+
+
+Pivot 3 ("PendingStatus(IW-NONHHP IH)")
+
+filters
+INOUTWTY - "OW", "NA"
+SERVICE_TYPE - "RH", "AD", "SR", "CI", "PS"
+CIC_PRD - "HHP"
+
+
+--pivot
+.addColLabel  : PENDING_DAYS
+.addRowLabel  : ASC_NAME, SERVICE_TYPE, STATUS_TEXT, REASON_TEXT
+.addColumnLabel  : Service_order
+
+
+
+
+
+
+
+Pivot 4 ("PendingStatus(OW-HHP)")
+
+filters
+INOUTWTY - "IW"
+CIC_PRD - "WSM", "HKE", "REF", "VDE", "MON", "ACN", " CLE", "VEE" 
+
+
+--pivot
+.addRowLabel  : ASC_NAME, SERVICE_TYPE, STATUS_TEXT, REASON_TEXT
+.addColumnLabel  : Service_order
+
+
+
+
+
+Pivot 5("PendingStatus(OW-NONHHP)")
+
+filters
+INOUTWTY - "IW"
+CIC_PRD - "HHP"
+
+
+--pivot
+.addRowLabel  : ASC_NAME, SERVICE_TYPE, STATUS_TEXT, REASON_TEXT
+.addColumnLabel  : Service_order
+
+
+
+
+
+Pivot 6 ("XML Errors")
+
+filters
+INOUTWTY - "OW", "NA"
+SERVICE_TYPE - "RH", "AD", "SR"
+Error Status - "N/A"
+Error msg - "N/A"
+
+
+--pivot
+.addColLabel  : PENDING_DAYS
+.addRowLabel  : ASC_NAME, Error Status, Error msg, CIC_PRD, Service_order
+.addColumnLabel  : Service_order
+
+
+
+
