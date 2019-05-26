@@ -1,5 +1,7 @@
 package com.samsung.excel.util;
 
+import com.samsung.excel.pivot.PivotConfig;
+import com.samsung.excel.pivot.filter.FilterEnumInterface;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -43,16 +45,19 @@ public class ExcelUtil {
 //
 
 
-    public static Map<Integer, List<String>> getFilterMap(List<Cell> headers){
-        FilterValueEnum[] values = FilterValueEnum.values();
+    public static Map<Integer, List<String>> getFilterMap(List<Cell> headers, PivotConfig pivotConfig){
+//        Filter1[] values = Filter1.values();
 
         Map<Integer, List<String>> filterMap = new HashMap<>();
 
-        for(FilterValueEnum filterValueEnum : values){
+        FilterEnumInterface filter = pivotConfig.getFilter();
+
+        for( Map.Entry<ExcelHeaderEnum, List<String>> entries : filter.getFilterMap().entrySet()){
+
             for(Cell cell : headers){
-                if(cell.getStringCellValue().trim().equals(filterValueEnum.getHeaderEnum().getHeaderName())){
+                if(cell.getStringCellValue().trim().equals(entries.getKey().getHeaderName())){
                     int columnIndex = cell.getColumnIndex();
-                    filterMap.put(columnIndex, filterValueEnum.getValue());
+                    filterMap.put(columnIndex, entries.getValue());
                     break;
                 }
 

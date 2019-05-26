@@ -2,6 +2,7 @@ package main;
 
 
 import com.samsung.excel.parser.ExcelParser;
+import com.samsung.excel.pivot.Pivot1Config;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class ExcelStarterClass {
             throw new RuntimeException("Cannot read file from the path: " + pathToReadFrom);
         }
 
-        starterClass.getExcelParserObject().processFile(file);
+        starterClass.getExcelParserObject().processFile(file, new Pivot1Config());
 
     }
 

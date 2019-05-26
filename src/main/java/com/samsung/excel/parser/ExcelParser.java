@@ -2,30 +2,39 @@ package com.samsung.excel.parser;
 
 import com.cookingfox.guava_preconditions.Preconditions;
 import com.samsung.excel.filter.ExcelFilterUtil;
+import com.samsung.excel.pivot.PivotConfig;
 import com.samsung.excel.util.ExcelException;
 import com.samsung.excel.util.ExcelHeaderEnum;
 import com.samsung.excel.util.ExcelUtil;
 import lombok.Data;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataConsolidateFunction;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Data
 public class ExcelParser {
 
     private static final Map<String, List<Row>> excel_by_service_name = new HashMap<>();
-    private static final String PIVOT1 = "Pivot1";
-    private static XSSFRow row;
-    private static Map<Row, List<Cell>> excel = new HashMap<>();
-    private static Map<String, ArrayList<Row>> SO_BY_PARTNER = new HashMap<>();
+    private static final String PIVOT1_NAME = "PendingStatus(IW)";
+    private static final String PIVOT2_NAME = "PendingStatus(IW-NONHHP CI+PS)";
+    private static final String PIVOT3_NAME = "PendingStatus(IW-NONHHP IH)";
+    private static final String PIVOT4_NAME = "PendingStatus(OW-HHP)";
+    private static final String PIVOT5_NAME = "PendingStatus(OW-NONHHP)";
+    private static final String PIVOT6_NAME = "XML Errors";
+
     private List<Cell> actualHeaders1;
     private ExcelFilterUtil excelFilterUtil = new ExcelFilterUtil();
 
@@ -33,7 +42,7 @@ public class ExcelParser {
     public ExcelParser() {
     }
 
-    public void processFile(File file) throws IOException {
+    public void processFile(File file, PivotConfig pivotConfig) throws IOException {
 
         Preconditions.checkNotNull(file, "File cannot be null while parsing");
 
@@ -43,7 +52,7 @@ public class ExcelParser {
             workbook = new XSSFWorkbook(fileInput);
         }
 
-        createSheetForPivots(workbook);
+        createSheetForPivots(workbook, PIVOT1_NAME);
 
 
         XSSFSheet mainSheet = workbook.getSheetAt(0);
@@ -59,7 +68,7 @@ public class ExcelParser {
 
 //        ******************Filter the sheet by some criteria
 
-        Map<Integer, List<String>> filterMap = ExcelUtil.getFilterMap(actualHeaders1);
+        Map<Integer, List<String>> filterMap = ExcelUtil.getFilterMap(actualHeaders1, pivotConfig);
 
         excelFilterUtil.eraseRows(mainSheet, filterMap);
 
@@ -78,11 +87,7 @@ public class ExcelParser {
 
         createPivot(mainSheet, pivotSheet);
 
-//        try (FileOutputStream fileOutputStream = new FileOutputStream("TestExample.xlsx", false)) {
-//            workbook.write(fileOutputStream);
-//        }
         excelFilterUtil.writeSheetToSpecificFile(workbook, "TestExample.xlsx");
-
 
 
 //        try (FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/ExcelPivot.xlsx", false)) {
@@ -107,61 +112,10 @@ public class ExcelParser {
 
         System.out.println("#################### ExcelParser Parsed ##################");
 
-//        while (rowIterator.hasNext()) {
-//
-//
-//            row = (XSSFRow) rowIterator.next();
-//
-//            Iterator<Cell> cellIterator = row.cellIterator();
-//
-//
-//            while (cellIterator.hasNext()) {
-//                Cell cell = cellIterator.next();
-//
-//
-//                switch (cell.getCellType()) {
-//                    case NUMERIC:
-//                        System.out.print(cell.getNumericCellValue() + " \t\t\t\t ");
-//                        break;
-//
-//                    case STRING:
-//                        System.out.print(
-//                                cell.getStringCellValue() + " \t\t\t\t\t\t\t\t ");
-//
-//                        break;
-//
-////                    case _NONE:
-////                        cell.setCellValue("N/A");
-////                        break;
-////
-////                    case ERROR:
-////                        cell.setCellValue("N/A");
-////                        break;
-//
-//                    case BLANK:
-//                        for (int i = cell.getColumnIndex(); i <= row.getLastCellNum(); i++) {
-//                            if (cell.getCellType() == CellType.BLANK) {
-//                                cell.setCellValue("N/A");
-//                            }
-//
-//                        }
-//
-////                       row.createCell(cell.getColumnIndex(), CellType.STRING);
-////                        cell.setCellType(CellType.STRING);
-////                        String cellValue = "N/A";
-//////                        cell.setCellValue(cellValue);
-////                        System.out.println(cell.getColumnIndex());
-////
-//                        break;
-//
-//                }
-//            }
-//            System.out.println();
-//        }
     }
 
-    private void createSheetForPivots(Workbook workbook) {
-        workbook.createSheet(PIVOT1);
+    private void createSheetForPivots(Workbook workbook, String pivotName) {
+        workbook.createSheet(pivotName);
     }
 
     private void createPivot(XSSFSheet sheet, XSSFSheet pivotSheet) {
