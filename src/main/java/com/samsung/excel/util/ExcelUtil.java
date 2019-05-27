@@ -46,7 +46,6 @@ public class ExcelUtil {
 
 
     public static Map<Integer, List<String>> getFilterMap(List<Cell> headers, PivotConfig pivotConfig){
-//        Filter1[] values = Filter1.values();
 
         Map<Integer, List<String>> filterMap = new HashMap<>();
 

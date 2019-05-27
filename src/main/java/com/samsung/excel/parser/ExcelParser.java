@@ -28,15 +28,11 @@ import java.util.*;
 public class ExcelParser {
 
     private static final Map<String, List<Row>> excel_by_service_name = new HashMap<>();
-    private static final String PIVOT1_NAME = "PendingStatus(IW)";
-    private static final String PIVOT2_NAME = "PendingStatus(IW-NONHHP CI+PS)";
-    private static final String PIVOT3_NAME = "PendingStatus(IW-NONHHP IH)";
-    private static final String PIVOT4_NAME = "PendingStatus(OW-HHP)";
-    private static final String PIVOT5_NAME = "PendingStatus(OW-NONHHP)";
-    private static final String PIVOT6_NAME = "XML Errors";
 
     private List<Cell> actualHeaders1;
     private ExcelFilterUtil excelFilterUtil = new ExcelFilterUtil();
+
+    int numberOfHeaderCell = 0;
 
 
     public ExcelParser() {
@@ -52,7 +48,7 @@ public class ExcelParser {
             workbook = new XSSFWorkbook(fileInput);
         }
 
-        createSheetForPivots(workbook, PIVOT1_NAME);
+        createSheetForPivots(workbook, pivotConfig.getName());
 
 
         XSSFSheet mainSheet = workbook.getSheetAt(0);
@@ -62,6 +58,9 @@ public class ExcelParser {
         Iterator<Row> rowIterator = mainSheet.iterator();
 
         Row header = rowIterator.next();
+
+//        Get the total numbers of header so it can be used to construct the pivot
+        numberOfHeaderCell = header.getLastCellNum();
 
         actualHeaders1 = ExcelUtil.getRequiredHeaders(header);
 
@@ -128,7 +127,7 @@ public class ExcelParser {
 
 //        TODO actualHeaders1.size() needs to be the maximum cell index position not the size
         AreaReference areaReference = new AreaReference(position,
-                new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
+                new CellReference(sheet.getLastRowNum(), numberOfHeaderCell), SpreadsheetVersion.EXCEL2007);
 
 
         XSSFPivotTable pivotTable = pivotSheet.createPivotTable(areaReference, position, sheet);

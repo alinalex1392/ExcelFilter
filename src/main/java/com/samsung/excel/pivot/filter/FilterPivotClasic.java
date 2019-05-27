@@ -2,11 +2,12 @@ package com.samsung.excel.pivot.filter;
 
 import com.samsung.excel.util.ExcelHeaderEnum;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Filter1 implements FilterEnumInterface {
-
-//    This enum contains the headerEnumValue and the value that we want from that column to be filtered
+public class FilterPivotClasic implements FilterEnumInterface {
 
     private Map<ExcelHeaderEnum, List<String>> filterMap = new HashMap<ExcelHeaderEnum, List<String>>(){
 
@@ -20,4 +21,5 @@ public class Filter1 implements FilterEnumInterface {
     public Map<ExcelHeaderEnum, List<String>> getFilterMap() {
         return filterMap;
     }
+
 }

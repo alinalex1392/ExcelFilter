@@ -1,18 +1,18 @@
 package com.samsung.excel.pivot;
 
 import com.samsung.excel.pivot.filter.FilterEnumInterface;
-import com.samsung.excel.pivot.filter.Filter1;
+import com.samsung.excel.pivot.filter.FilterPivotClasic;
 
-public class Pivot1Config implements PivotConfig {
+public class PivotPSIWConfig implements PivotConfig {
 
     @Override
     public String getName() {
-        return "PIVOT1_NAME";
+        return "PendingStatus(IW)";
     }
 
     @Override
     public FilterEnumInterface getFilter() {
-        return new Filter1();
+        return new FilterPivotClasic();
     }
 
 
