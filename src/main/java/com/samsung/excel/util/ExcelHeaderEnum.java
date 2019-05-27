@@ -11,84 +11,84 @@ public enum ExcelHeaderEnum {
 
     //TODO sterge a doua coloana cea cu Collections.singletonList la toate si dupa si variabila      private List<String> acceptedValues;
     // pe unde o vezi
-    Service_order("Service_order", Collections.singletonList("Service_order")),
-    HEADER1("Error Status", Collections.singletonList("Error Status")),
-    HEADER2("Error msg", Collections.singletonList("Error msg")),
-    HEADER3("SAW Status", Collections.singletonList("SAW Status")),
-    HEADER4("SAW cat.", Collections.singletonList("SAW cat.")),
-    COUNTRY("COUNTRY", Collections.singletonList("COUNTRY")),
-    HEADER5("HQ aging base date", Collections.singletonList("HQ aging base date")),
-    PENDING_DAYS("PENDING_DAYS", Collections.singletonList("PENDING_DAYS")),
-    POSTING_DATE("POSTING_DATE", Collections.singletonList("POSTING_DATE")),
-    SERVICE_TYPE("SERVICE_TYPE", Collections.singletonList("SERVICE_TYPE")),
-    SERVICE_TYPE_TXT("SERVICE_TYPE_TXT", Collections.singletonList("SERVICE_TYPE_TXT")),
-    STATUS_TEXT("STATUS_TEXT", Collections.singletonList("STATUS_TEXT")),
-    REASON_TEXT("REASON_TEXT", Collections.singletonList("REASON_TEXT")),
-    REASON_AGING("REASON_AGING", Collections.singletonList("REASON_AGING")),
-    HEADER12("ASC code", Collections.singletonList("ASC code")),
-    ASC_NAME("ASC name", Collections.singletonList("ASC name")),
-    HEADER14("Engineer code", Collections.singletonList("Engineer code")),
-    HEADER15("Engineer name", Collections.singletonList("Engineer name")),
-    ASC_JOB_NO("ASC_JOB_NO", Collections.singletonList("ASC_JOB_NO")),
-    MODEL("MODEL", Collections.singletonList("MODEL")),
-    CIC_PRD("CIC_PRD", Collections.singletonList("CIC_PRD")),
-    SERIAL_NO("SERIAL_NO", Collections.singletonList("SERIAL_NO")),
-    INOUTWTY("INOUTWTY", Collections.singletonList("INOUTWTY")),
-    IMEI("IMEI", Collections.singletonList("IMEI")),
-    DEFECT_DESC("DEFECT_DESC", Collections.singletonList("DEFECT_DESC")),
-    Part_code1("Part_code1", Collections.singletonList("Part_code1")),
-    ASC_PO_No1("ASC_PO_No1", Collections.singletonList("ASC_PO_No1")),
-    confirmation_No1("confirmation_No1", Collections.singletonList("confirmation_No1")),
-    QTY1("QTY1", Collections.singletonList("QTY1")),
-    PO_DATE1("PO_DATE1", Collections.singletonList("PO_DATE1")),
-    SO_SHIP_DATE1("SO_SHIP_DATE1", Collections.singletonList("SO_SHIP_DATE1")),
-    SO_ARRIVE_DATE1("SO_ARRIVE_DATE1", Collections.singletonList("SO_ARRIVE_DATE1")),
-    SO_UPS_TRK_NO1("SO_UPS_TRK_NO1", Collections.singletonList("SO_UPS_TRK_NO1")),
-    SO_STATUS_TEXT1("SO_STATUS_TEXT1", Collections.singletonList("SO_STATUS_TEXT1")),
-    Part_code2("Part_code2", Collections.singletonList("Part_code2")),
-    ASC_PO_No2("ASC_PO_No2", Collections.singletonList("ASC_PO_No2")),
-    SO_NO2("SO_NO2", Collections.singletonList("SO_NO2")),
-    QTY2("QTY2", Collections.singletonList("QTY2")),
-    PO_DATE2("PO_DATE2", Collections.singletonList("PO_DATE2")),
-    SO_SHIP_DATE2("SO_SHIP_DATE2", Collections.singletonList("SO_SHIP_DATE2")),
-    SO_ARRIVE_DATE2("SO_ARRIVE_DATE2", Collections.singletonList("SO_ARRIVE_DATE2")),
-    SO_UPS_TRK_NO2("SO_UPS_TRK_NO2", Collections.singletonList("SO_UPS_TRK_NO2")),
-    SO_STATUS_TEXT2("SO_STATUS_TEXT2", Collections.singletonList("SO_STATUS_TEXT2")),
-    Part_code3("Part_code3", Collections.singletonList("Part_code3")),
-    ASC_PO_No3("ASC_PO_No3", Collections.singletonList("ASC_PO_No3")),
-    SO_NO3("SO_NO3", Collections.singletonList("SO_NO3")),
-    QTY3("QTY3", Collections.singletonList("QTY3")),
-    PO_DATE3("PO_DATE3", Collections.singletonList("PO_DATE3")),
-    SO_SHIP_DATE3("SO_SHIP_DATE3", Collections.singletonList("SO_SHIP_DATE3")),
-    SO_ARRIVE_DATE3("SO_ARRIVE_DATE3", Collections.singletonList("SO_ARRIVE_DATE3")),
-    SO_UPS_TRK_NO3("SO_UPS_TRK_NO3", Collections.singletonList("SO_UPS_TRK_NO3")),
-    SO_STATUS_TEXT3("SO_STATUS_TEXT3", Collections.singletonList("SO_STATUS_TEXT3")),
-    Part_code4("Part_code4", Collections.singletonList("Part_code4")),
-    ASC_PO_No4("ASC_PO_No4", Collections.singletonList("ASC_PO_No4")),
-    SO_NO4("SO_NO4", Collections.singletonList("SO_NO4")),
-    QTY4("QTY4", Collections.singletonList("QTY4")),
-    PO_DATE4("PO_DATE4", Collections.singletonList("PO_DATE4")),
-    SO_SHIP_DATE4("SO_SHIP_DATE4", Collections.singletonList("SO_SHIP_DATE4")),
-    SO_ARRIVE_DATE4("SO_ARRIVE_DATE4", Collections.singletonList("SO_ARRIVE_DATE4")),
-    SO_UPS_TRK_NO4("SO_UPS_TRK_NO4", Collections.singletonList("SO_UPS_TRK_NO4")),
-    SO_STATUS_TEXT4("SO_STATUS_TEXT4", Collections.singletonList("SO_STATUS_TEXT4")),
-    Part_code5("Part_code5", Collections.singletonList("Part_code5")),
-    ASC_PO_No5("ASC_PO_No5", Collections.singletonList("ASC_PO_No5")),
-    SO_NO5("SO_NO5", Collections.singletonList("SO_NO5")),
-    QTY5("QTY5", Collections.singletonList("QTY5")),
-    PO_DATE5("PO_DATE5", Collections.singletonList("PO_DATE5")),
-    SO_SHIP_DATE5("SO_SHIP_DATE5", Collections.singletonList("SO_SHIP_DATE5")),
-    SO_ARRIVE_DATE5("SO_ARRIVE_DATE5", Collections.singletonList("SO_ARRIVE_DATE5")),
-    SO_UPS_TRK_NO5("SO_UPS_TRK_NO5", Collections.singletonList("SO_UPS_TRK_NO5")),
-    SO_STATUS_TEXT5("SO_STATUS_TEXT5", Collections.singletonList("SO_STATUS_TEXT5"));
+    Service_order("Service_order"),
+    HEADER1("Error Status"),
+    HEADER2("Error msg"),
+    HEADER3("SAW Status"),
+    HEADER4("SAW cat."),
+    COUNTRY("COUNTRY"),
+    HEADER5("HQ aging base date"),
+    PENDING_DAYS("PENDING_DAYS"),
+    POSTING_DATE("POSTING_DATE"),
+    SERVICE_TYPE("SERVICE_TYPE"),
+    SERVICE_TYPE_TXT("SERVICE_TYPE_TXT"),
+    STATUS_TEXT("STATUS_TEXT"),
+    REASON_TEXT("REASON_TEXT"),
+    REASON_AGING("REASON_AGING"),
+    HEADER12("ASC code"),
+    ASC_NAME("ASC name"),
+    HEADER14("Engineer code"),
+    HEADER15("Engineer name"),
+    ASC_JOB_NO("ASC_JOB_NO"),
+    MODEL("MODEL"),
+    CIC_PRD("CIC_PRD"),
+    SERIAL_NO("SERIAL_NO"),
+    INOUTWTY("INOUTWTY"),
+    IMEI("IMEI"),
+    DEFECT_DESC("DEFECT_DESC"),
+    Part_code1("Part_code1"),
+    ASC_PO_No1("ASC_PO_No1"),
+    confirmation_No1("confirmation_No1"),
+    QTY1("QTY1"),
+    PO_DATE1("PO_DATE1"),
+    SO_SHIP_DATE1("SO_SHIP_DATE1"),
+    SO_ARRIVE_DATE1("SO_ARRIVE_DATE1"),
+    SO_UPS_TRK_NO1("SO_UPS_TRK_NO1"),
+    SO_STATUS_TEXT1("SO_STATUS_TEXT1"),
+    Part_code2("Part_code2"),
+    ASC_PO_No2("ASC_PO_No2"),
+    SO_NO2("SO_NO2"),
+    QTY2("QTY2"),
+    PO_DATE2("PO_DATE2"),
+    SO_SHIP_DATE2("SO_SHIP_DATE2"),
+    SO_ARRIVE_DATE2("SO_ARRIVE_DATE2"),
+    SO_UPS_TRK_NO2("SO_UPS_TRK_NO2"),
+    SO_STATUS_TEXT2("SO_STATUS_TEXT2"),
+    Part_code3("Part_code3"),
+    ASC_PO_No3("ASC_PO_No3"),
+    SO_NO3("SO_NO3"),
+    QTY3("QTY3"),
+    PO_DATE3("PO_DATE3"),
+    SO_SHIP_DATE3("SO_SHIP_DATE3"),
+    SO_ARRIVE_DATE3("SO_ARRIVE_DATE3"),
+    SO_UPS_TRK_NO3("SO_UPS_TRK_NO3"),
+    SO_STATUS_TEXT3("SO_STATUS_TEXT3"),
+    Part_code4("Part_code4"),
+    ASC_PO_No4("ASC_PO_No4"),
+    SO_NO4("SO_NO4"),
+    QTY4("QTY4"),
+    PO_DATE4("PO_DATE4"),
+    SO_SHIP_DATE4("SO_SHIP_DATE4"),
+    SO_ARRIVE_DATE4("SO_ARRIVE_DATE4"),
+    SO_UPS_TRK_NO4("SO_UPS_TRK_NO4"),
+    SO_STATUS_TEXT4("SO_STATUS_TEXT4"),
+    Part_code5("Part_code5"),
+    ASC_PO_No5("ASC_PO_No5"),
+    SO_NO5("SO_NO5"),
+    QTY5("QTY5"),
+    PO_DATE5("PO_DATE5"),
+    SO_SHIP_DATE5("SO_SHIP_DATE5"),
+    SO_ARRIVE_DATE5("SO_ARRIVE_DATE5"),
+    SO_UPS_TRK_NO5("SO_UPS_TRK_NO5"),
+    SO_STATUS_TEXT5("SO_STATUS_TEXT5");
 
 
     private String headerName;
-    private List<String> acceptedValues;
 
-    ExcelHeaderEnum(String header, List<String> acceptedValues) {
+
+    ExcelHeaderEnum(String header) {
         this.headerName = header;
-        this.acceptedValues = acceptedValues;
+
     }
 
     public static List<String> getAllHeadersName() {
@@ -98,25 +98,23 @@ public enum ExcelHeaderEnum {
                 .collect(Collectors.toList());
     }
 
-    public static List<String> getAcceptedValuesByHeader(String headerName) {
-
-        Preconditions.checkNotNull(headerName, "Header Name cannot be null");
-
-        ExcelHeaderEnum excelHeaderEnum1 = ExcelHeaderEnum.valueOf(headerName);
-
-
-        Preconditions.checkNotNull(excelHeaderEnum1,
-                "Value of headerName need to be in ExcelHeaderEnum ");
-
-        return excelHeaderEnum1.getAcceptedValues();
-    }
+//    public static List<String> getAcceptedValuesByHeader(String headerName) {
+////
+////        Preconditions.checkNotNull(headerName, "Header Name cannot be null");
+////
+////        ExcelHeaderEnum excelHeaderEnum1 = ExcelHeaderEnum.valueOf(headerName);
+////
+////
+////        Preconditions.checkNotNull(excelHeaderEnum1,
+////                "Value of headerName need to be in ExcelHeaderEnum ");
+////
+////        return excelHeaderEnum1.getAcceptedValues();
+////    }
 
     public String getHeaderName() {
         return headerName;
     }
 
-    public List<String> getAcceptedValues() {
-        return acceptedValues;
-    }
+
 
 }

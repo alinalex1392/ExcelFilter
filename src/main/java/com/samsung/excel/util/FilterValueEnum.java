@@ -8,7 +8,17 @@ public enum FilterValueEnum {
 
 //    This enum contains the headerEnumValue and the value that we want from that column to be filtered
 
-    FILTER1(ExcelHeaderEnum.SERVICE_TYPE, Arrays.asList("PS", "CI"));
+    FILTER1(ExcelHeaderEnum.SERVICE_TYPE, Arrays.asList("RH", "SR", "AD")),
+
+    /* in functie de felul de pivot, aici trebuie un pivot cu InWarranty(IW) si unul
+    pentru outOfWarranty(OW, NA, celule blank
+
+      pivot outOfWarranty trebuie sa includa toate service type-urile
+     */
+
+    FILTER2(ExcelHeaderEnum.INOUTWTY, Arrays.asList("NA", "OW"));
+
+
 
     ExcelHeaderEnum headerEnum;
     List<String> value;
@@ -35,4 +45,5 @@ public enum FilterValueEnum {
     public void setValue(List<String> value) {
         this.value = value;
     }
+
 }
