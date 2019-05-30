@@ -4,7 +4,7 @@ import com.samsung.excel.util.ExcelHeaderEnum;
 
 import java.util.*;
 
-public class FilterPivotPS_IW implements FilterEnumInterface {
+public class FilterPivotPS_IW implements Filter {
 
     private Map<ExcelHeaderEnum, List<String>> filterMap = new HashMap<ExcelHeaderEnum, List<String>>(){
 

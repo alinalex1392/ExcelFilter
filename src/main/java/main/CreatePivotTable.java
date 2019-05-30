@@ -1,5 +1,6 @@
 //package main;
 //
+//import com.samsung.excel.filter.ExcelFilterUtil;
 //import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 //import org.apache.poi.ss.SpreadsheetVersion;
 //import org.apache.poi.ss.usermodel.Cell;
@@ -27,36 +28,47 @@
 ////            AreaReference source = new AreaReference(new CellReference(0,0),
 ////                    new CellReference(3,3), SpreadsheetVersion.EXCEL2007);
 //
-//            AreaReference source = new AreaReference(new CellReference(sheet.getFirstRowNum(), sheet.getFirstRowNum()),
-//                    new CellReference(sheet.getLastRowNum(), 3), SpreadsheetVersion.EXCEL2007);
+////            AreaReference source = new AreaReference(new CellReference(sheet.getFirstRowNum(), sheet.getFirstRowNum()),
+////                    new CellReference(sheet.getLastRowNum(), 3), SpreadsheetVersion.EXCEL2007);
+////
+////            System.out.println("main.ExcelStarterClass cell: " + source.getFirstCell().formatAsString());
+////            System.out.println("Second cell: " + source.getLastCell().formatAsString());
+////
+////
+////            for (CellReference cell : source.getAllReferencedCells()) {
+////
+////                System.out.println(cell.formatAsString());
+////
+////
+////            }
+////
+////            CellReference position = new CellReference(sheet.getLastRowNum() + 10, 0);
+////            // Create a pivot table on this sheet, with H5 as the top-left cell..
+////            // The pivot table's data source is on the same sheet in A1:D4
+////            XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
+////            //Configure the pivot table
+////            //Use first column as row label
+////            pivotTable.addRowLabel(0);
+////            //Sum up the second column
+////            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
+////            //Set the third column as filter
+////            pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, 2);
+////            //Add filter on forth column
+////            pivotTable.addReportFilter(3);
 //
-//            System.out.println("main.ExcelStarterClass cell: " + source.getFirstCell().formatAsString());
-//            System.out.println("Second cell: " + source.getLastCell().formatAsString());
+//            XSSFWorkbook newWorkbook = new XSSFWorkbook();
+//            XSSFSheet sheet1 = newWorkbook.createSheet();
 //
 //
-//            for (CellReference cell : source.getAllReferencedCells()) {
+//            ExcelFilterUtil.copySheet(sheet, sheet1);
 //
-//                System.out.println(cell.formatAsString());
-//
-//
-//            }
-//
-//            CellReference position = new CellReference(sheet.getLastRowNum() + 10, 0);
-//            // Create a pivot table on this sheet, with H5 as the top-left cell..
-//            // The pivot table's data source is on the same sheet in A1:D4
-//            XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
-//            //Configure the pivot table
-//            //Use first column as row label
-//            pivotTable.addRowLabel(0);
-//            //Sum up the second column
-//            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
-//            //Set the third column as filter
-//            pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, 2);
-//            //Add filter on forth column
-//            pivotTable.addReportFilter(3);
 //
 //            try (FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.xlsx")) {
 //                wb.write(fileOut);
+//            }
+//
+//            try (FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable_copied.xlsx")) {
+//                newWorkbook.write(fileOut);
 //            }
 //        }
 //    }
