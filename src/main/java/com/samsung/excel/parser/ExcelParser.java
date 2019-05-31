@@ -60,7 +60,7 @@ public class ExcelParser {
         excelFilterUtil.eraseRows(mainSheet, filterMap);
 
 
-        XSSFWorkbook newWb = copySheet(workbook.getSheetAt(0));
+        XSSFWorkbook newWb = copySheet(mainSheet);
 
         createSheetForPivots(newWb, pivotConfig.getName());
 

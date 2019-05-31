@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static org.apache.poi.ss.usermodel.CellType.*;
+
 public class ExcelUtil {
 
     private static final List<String> headersWanted = ExcelHeaderEnum.getAllHeadersName();
@@ -35,9 +37,8 @@ public class ExcelUtil {
                 for (Cell sourceCell : sourceRow) {
 
                     XSSFCell destinationCell = destinationRow.createCell(destinationColumnIndex++);
-                    sourceCell.setCellType(CellType.STRING);
 
-                    destinationCell.setCellValue(sourceCell.getStringCellValue());
+                    setCellValue(destinationCell, sourceCell);
                 }
 
             } catch (Exception e) {
@@ -45,6 +46,39 @@ public class ExcelUtil {
             }
         }
     }
+
+
+    public static void setCellValue(Cell targetCell , Cell sourceCell){
+
+        switch (sourceCell.getCellType()) {
+            case STRING:
+                targetCell.setCellValue(sourceCell.getStringCellValue());
+                break;
+
+            case FORMULA:
+                targetCell.setCellValue(sourceCell.getCellFormula());
+                break;
+
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(sourceCell)) {
+                    targetCell.setCellValue(sourceCell.getDateCellValue().toString());
+                } else {
+                    targetCell.setCellValue(Double.toString(sourceCell.getNumericCellValue()));
+                }
+                break;
+
+            case BLANK:
+                targetCell.setCellValue("");
+                break;
+
+            case BOOLEAN:
+                targetCell.setCellValue(Boolean.toString(sourceCell.getBooleanCellValue()));
+                break;
+
+        }
+
+    }
+
 
 
 //    This method get the max column index in the accepted excel headers
@@ -56,11 +90,11 @@ public class ExcelUtil {
 
         for (Cell excelCell : excelHeaders) {
 
-            excelCell.setCellType(CellType.STRING);
+            excelCell.setCellType(STRING);
 
             for (Cell sheetCell : sheet) {
 
-                sheetCell.setCellType(CellType.STRING);
+                sheetCell.setCellType(STRING);
 
                 if (sheetCell.getStringCellValue().equals(excelCell.getStringCellValue())) {
                     if (maxIndex < sheetCell.getColumnIndex()) {
