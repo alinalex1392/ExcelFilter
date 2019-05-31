@@ -44,5 +44,10 @@ public class PivotPSIWConfig implements PivotConfig {
         return ExcelHeaderEnum.Service_order;
     }
 
+    @Override
+    public String outputFilename() {
+        return getName();
+    }
+
 
 }

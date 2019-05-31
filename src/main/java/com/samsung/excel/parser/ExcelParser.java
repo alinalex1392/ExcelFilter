@@ -66,7 +66,7 @@ public class ExcelParser {
 
 
         excelFilterUtil.writeSheetToSpecificFile(workbook, "SheetFiltered");
-        excelFilterUtil.writeSheetToSpecificFile(newWb, "SheetFilteredProcessed");
+        excelFilterUtil.writeSheetToSpecificFile(newWb, "SheetAfterCopy");
 
 
         System.out.println("########### Actual actualHeaders################");
@@ -81,7 +81,7 @@ public class ExcelParser {
 
         createPivot(newWb.getSheetAt(0), newWb.getSheetAt(1), pivotConfig);
 
-        excelFilterUtil.writeSheetToSpecificFile(newWb, "TestExample.xlsx");
+        excelFilterUtil.writeSheetToSpecificFile(newWb, pivotConfig.outputFilename());
 
         System.out.println("#################### ExcelParser Parsed ##################");
 

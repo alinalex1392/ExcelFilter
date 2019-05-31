@@ -31,7 +31,7 @@
 ////            AreaReference source = new AreaReference(new CellReference(sheet.getFirstRowNum(), sheet.getFirstRowNum()),
 ////                    new CellReference(sheet.getLastRowNum(), 3), SpreadsheetVersion.EXCEL2007);
 ////
-////            System.out.println("main.ExcelStarterClass cell: " + source.getFirstCell().formatAsString());
+////            System.out.println("main.Launcher cell: " + source.getFirstCell().formatAsString());
 ////            System.out.println("Second cell: " + source.getLastCell().formatAsString());
 ////
 ////

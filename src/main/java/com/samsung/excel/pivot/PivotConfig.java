@@ -20,4 +20,6 @@ public interface PivotConfig {
 
     ExcelHeaderEnum getColumnForDataConsolidateFunction();
 
+    String outputFilename();
+
 }
