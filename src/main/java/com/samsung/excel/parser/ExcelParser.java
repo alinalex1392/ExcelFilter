@@ -1,15 +1,12 @@
 package com.samsung.excel.parser;
 
 import com.cookingfox.guava_preconditions.Preconditions;
-import com.samsung.excel.filter.ExcelFilterUtil;
 import com.samsung.excel.pivot.PivotConfig;
-import com.samsung.excel.util.ExcelException;
+import com.samsung.excel.util.ExcelConstructUtil;
 import com.samsung.excel.util.ExcelHeaderEnum;
 import com.samsung.excel.util.ExcelUtil;
-import lombok.Data;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
@@ -22,22 +19,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-@Data
 public class ExcelParser {
 
-    private static final Map<String, List<Row>> excel_by_service_name = new HashMap<>();
-    private static final String PIVOT1_NAME = "PendingStatus(IW)";
-    private static final String PIVOT2_NAME = "PendingStatus(IW-NONHHP CI+PS)";
-    private static final String PIVOT3_NAME = "PendingStatus(IW-NONHHP IH)";
-    private static final String PIVOT4_NAME = "PendingStatus(OW-HHP)";
-    private static final String PIVOT5_NAME = "PendingStatus(OW-NONHHP)";
-    private static final String PIVOT6_NAME = "XML Errors";
+    private ExcelUtil excelFilterUtil = new ExcelUtil();
 
-    private List<Cell> actualHeaders1;
-    private ExcelFilterUtil excelFilterUtil = new ExcelFilterUtil();
-
+    private ExcelConstructUtil excelConstructUtil;
 
     public ExcelParser() {
     }
@@ -45,6 +36,7 @@ public class ExcelParser {
     public void processFile(File file, PivotConfig pivotConfig) throws IOException {
 
         Preconditions.checkNotNull(file, "File cannot be null while parsing");
+        Preconditions.checkNotNull(pivotConfig, "The pivot configuration cannot be null");
 
         XSSFWorkbook workbook;
 
@@ -52,146 +44,139 @@ public class ExcelParser {
             workbook = new XSSFWorkbook(fileInput);
         }
 
-        createSheetForPivots(workbook, PIVOT1_NAME);
-
-
         XSSFSheet mainSheet = workbook.getSheetAt(0);
-        XSSFSheet pivotSheet = workbook.getSheetAt(1);
-
 
         Iterator<Row> rowIterator = mainSheet.iterator();
 
         Row header = rowIterator.next();
 
-        actualHeaders1 = ExcelUtil.getRequiredHeaders(header);
 
+        excelConstructUtil = com.samsung.excel.util.ExcelUtil.getExcelConstructUtil(header);
 
 //        ******************Filter the sheet by some criteria
 
-        Map<Integer, List<String>> filterMap = ExcelUtil.getFilterMap(actualHeaders1, pivotConfig);
+        Map<Integer, List<String>> filterMap = com.samsung.excel.util.ExcelUtil.getFilterMap(excelConstructUtil.getHeadersWanted(), pivotConfig);
 
         excelFilterUtil.eraseRows(mainSheet, filterMap);
 
+
+        XSSFWorkbook newWb = copySheet(workbook.getSheetAt(0));
+
+        createSheetForPivots(newWb, pivotConfig.getName());
+
+
         excelFilterUtil.writeSheetToSpecificFile(workbook, "SheetFiltered");
+        excelFilterUtil.writeSheetToSpecificFile(newWb, "SheetFilteredProcessed");
 
 
         System.out.println("########### Actual actualHeaders################");
 
-        actualHeaders1.forEach(System.out::println);
+        excelConstructUtil.getHeadersWanted().forEach(System.out::println);
 
-        for (Cell cell : actualHeaders1) {
+        for (Cell cell : excelConstructUtil.getHeadersWanted()) {
             System.out.println(cell.getStringCellValue());
 
         }
 
 
-        createPivot(mainSheet, pivotSheet);
+        createPivot(newWb.getSheetAt(0), newWb.getSheetAt(1), pivotConfig);
 
-        excelFilterUtil.writeSheetToSpecificFile(workbook, "TestExample.xlsx");
-
-
-//        try (FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/ExcelPivot.xlsx", false)) {
-//            workbook.write(fileOutputStream);
-//        }
-//
-//        Cell requiredExcelHeader = getRequiredExcelHeader(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE.getHeaderName());
-//
-//
-////       build a map that keys are SERVICE TYPE
-//        while (rowIterator.hasNext()) {
-//
-//            Row row = rowIterator.next();
-//
-//            for (Cell cellFromRow : row) {
-//
-//                if (cellFromRow.getColumnIndex() == requiredExcelHeader.getColumnIndex()) {
-//                    populateExcelMap(cellFromRow.getStringCellValue(), row);
-//                }
-//            }
-//        }
+        excelFilterUtil.writeSheetToSpecificFile(newWb, "TestExample.xlsx");
 
         System.out.println("#################### ExcelParser Parsed ##################");
 
+    }
+
+
+//    This method is copying sheet without erased rows
+
+    private XSSFWorkbook copySheet(XSSFSheet sheetAt) {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet rawData = wb.createSheet("RawData");
+
+        ExcelUtil.copySheet(sheetAt, rawData);
+
+        return wb;
     }
 
     private void createSheetForPivots(Workbook workbook, String pivotName) {
         workbook.createSheet(pivotName);
     }
 
-    private void createPivot(XSSFSheet sheet, XSSFSheet pivotSheet) {
+    private void createPivot(XSSFSheet sheet, XSSFSheet pivotSheet, PivotConfig pivotConfig) {
 
         CellReference position = new CellReference(0, 0);
 
 //        AreaReference areaReference = new AreaReference(position,
-//                new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
+//                new CellReference(sheet.getLastRowNum(), excelHeaders.size()), SpreadsheetVersion.EXCEL2007);
 
-
-//        TODO actualHeaders1.size() needs to be the maximum cell index position not the size
         AreaReference areaReference = new AreaReference(position,
-                new CellReference(sheet.getLastRowNum(), actualHeaders1.size()), SpreadsheetVersion.EXCEL2007);
+                new CellReference(sheet.getLastRowNum(), excelConstructUtil.getMaxColumnIndex()), SpreadsheetVersion.EXCEL2007);
 
 
         XSSFPivotTable pivotTable = pivotSheet.createPivotTable(areaReference, position, sheet);
 //        XSSFPivotTable pivotTable = sheet.createPivotTable(areaReference, new CellReference(sheet.getLastRowNum() + 10, 1));
 
-        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.ASC_NAME));
-        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE));
-        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.STATUS_TEXT));
-        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.REASON_TEXT));
-//        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
-//        pivotTable.addRowLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.REASON_TEXT));
+
+        List<ExcelHeaderEnum> pivotRowLabels = pivotConfig.getPivotRowLabels();
+
+        for (ExcelHeaderEnum rowLabels : pivotRowLabels) {
+            int columnIndexOf = getColumnIndexOf(excelConstructUtil.getHeadersWanted(), rowLabels);
+
+            if (columnIndexOf < 0) {
+
+                throw new RuntimeException("Column for the pivot rowLabel must exist in the header of the sheet");
+            }
+
+            pivotTable.addRowLabel(columnIndexOf);
+        }
+
+//        pivotTable.addRowLabel(getColumnIndexOf(excelConstructUtil.getHeadersWanted(), ExcelHeaderEnum.ASC_NAME));
+//        pivotTable.addRowLabel(getColumnIndexOf(excelConstructUtil.getHeadersWanted(), ExcelHeaderEnum.SERVICE_TYPE));
+//        pivotTable.addRowLabel(getColumnIndexOf(excelConstructUtil.getHeadersWanted(), ExcelHeaderEnum.STATUS_TEXT));
+//        pivotTable.addRowLabel(getColumnIndexOf(excelConstructUtil.getHeadersWanted(), ExcelHeaderEnum.REASON_TEXT));
+
+//        pivotTable.addRowLabel(getColumnIndexOf(excelHeaders, ExcelHeaderEnum.SERVICE_TYPE_TXT));
+//        pivotTable.addRowLabel(getColumnIndexOf(excelHeaders, ExcelHeaderEnum.REASON_TEXT));
 
 //        ExcelHeaderEnum.PENDING_DAYS.getAcceptedValues().sort(Comparator.reverseOrder());
 
-        pivotTable.addColLabel(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.PENDING_DAYS));
+
+        List<ExcelHeaderEnum> pivotColumnLabels = pivotConfig.getPivotColumnLabels();
+
+        for (ExcelHeaderEnum columnLabels : pivotColumnLabels) {
+            int columnIndexOf = getColumnIndexOf(excelConstructUtil.getHeadersWanted(), columnLabels);
+
+            if (columnIndexOf < 0) {
+
+                throw new RuntimeException("Column for the pivot columnLabel must exist in the header of the sheet");
+            }
+            pivotTable.addColLabel(columnIndexOf);
+
+        }
+
+//        pivotTable.addColLabel(getColumnIndexOf(excelConstructUtil.getHeadersWanted(), ExcelHeaderEnum.PENDING_DAYS));
 //        pivotTable.getColLabelColumns().stream().sorted();
 
 //        sortAscending(ExcelHeaderEnum.PENDING_DAYS.getAcceptedValues(), ExcelHeaderEnum.PENDING_DAYS);
 
 
-        pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.Service_order));
+        pivotTable.addColumnLabel(pivotConfig.getDataConsolidateFunction(), getColumnIndexOf(excelConstructUtil.getHeadersWanted(), pivotConfig.getColumnForDataConsolidateFunction()));
 
 
-//        pivotTable.addReportFilter(getColumnIndexOf(actualHeaders1, ExcelHeaderEnum.SERVICE_TYPE_TXT));
+//        pivotTable.addReportFilter(getColumnIndexOf(excelHeaders, ExcelHeaderEnum.SERVICE_TYPE_TXT));
 
     }
 
-    private int getColumnIndexOf(List<Cell> actualHeaders1, ExcelHeaderEnum serviceType) {
-        Optional<Cell> first = actualHeaders1.stream()
-                .filter(cell -> cell.getStringCellValue().equals(serviceType.getHeaderName()))
+    private int getColumnIndexOf(List<Cell> actualHeaders, ExcelHeaderEnum headerDef) {
+
+        Optional<Cell> first = actualHeaders.stream()
+                .filter(cell -> cell.getStringCellValue().equals(headerDef.getHeaderName()))
                 .findFirst();
 
 
         return first.map(Cell::getColumnIndex).orElse(-1);
-    }
-
-
-    private void populateExcelMap(String stringCellValue, Row row) {
-
-        if (excel_by_service_name.containsKey(stringCellValue)) {
-            excel_by_service_name.get(stringCellValue).add(row);
-        } else {
-
-            List<Row> rowsByServiceName = new ArrayList<>();
-            rowsByServiceName.add(row);
-            excel_by_service_name.put(stringCellValue, rowsByServiceName);
-        }
-    }
-
-
-    public Cell getRequiredExcelHeader(List<Cell> headers, String headerValue) {
-        Optional<Cell> requiredHeaderByName = ExcelUtil.getRequiredHeaderByName(headers, headerValue);
-
-        if (requiredHeaderByName.isPresent()) {
-            return requiredHeaderByName.get();
-        }
-
-        throw new ExcelException("Value " + headerValue + " not found in the header cannot proceed with parsing");
-    }
-
-    public void sortAscending(List<String> pendingDays, ExcelHeaderEnum days) {
-        pendingDays.stream().sorted((o1, o2) -> Integer.valueOf(o2) - Integer.valueOf(o1));
-
     }
 
 
