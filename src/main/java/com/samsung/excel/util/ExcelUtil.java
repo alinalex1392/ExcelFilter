@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-import static org.apache.poi.ss.usermodel.CellType.*;
+import static org.apache.poi.ss.usermodel.CellType.STRING;
 
 public class ExcelUtil {
 
@@ -32,11 +32,9 @@ public class ExcelUtil {
 
                 XSSFRow destinationRow = destination.createRow(destinationRowIndex++);
 
-                int destinationColumnIndex = 0;
-
                 for (Cell sourceCell : sourceRow) {
 
-                    XSSFCell destinationCell = destinationRow.createCell(destinationColumnIndex++);
+                    XSSFCell destinationCell = destinationRow.createCell(sourceCell.getColumnIndex());
 
                     setCellValue(destinationCell, sourceCell);
                 }
@@ -47,8 +45,16 @@ public class ExcelUtil {
         }
     }
 
+//    private static int replicateBlankCell(XSSFRow destinationRow, Cell sourceCell, int destinationColumnIndex) {
+//        if(sourceCell.getColumnIndex() != destinationColumnIndex){
+//            createBlankCell(destinationRow, sourceCell.getColumnIndex() - destinationColumnIndex);
+//            return sourceCell.getColumnIndex();
+//        }
+//        return destinationColumnIndex;
+//    }
 
-    public static void setCellValue(Cell targetCell , Cell sourceCell){
+
+    public static void setCellValue(Cell targetCell, Cell sourceCell) {
 
         switch (sourceCell.getCellType()) {
             case STRING:
@@ -63,7 +69,7 @@ public class ExcelUtil {
                 if (DateUtil.isCellDateFormatted(sourceCell)) {
                     targetCell.setCellValue(sourceCell.getDateCellValue().toString());
                 } else {
-                    targetCell.setCellValue(Double.toString(sourceCell.getNumericCellValue()));
+                    targetCell.setCellValue(sourceCell.getNumericCellValue());
                 }
                 break;
 
@@ -78,7 +84,6 @@ public class ExcelUtil {
         }
 
     }
-
 
 
 //    This method get the max column index in the accepted excel headers
@@ -111,14 +116,14 @@ public class ExcelUtil {
     public static ExcelConstructUtil getExcelConstructUtil(Row header) {
 
         List<Cell> actualHeaders = new ArrayList<>();
-        int maxIndex=0;
+        int maxIndex = 0;
 
 
         for (Cell cell : header) {
 
             if (headersWanted.contains(cell.getStringCellValue())) {
 
-                if(maxIndex < cell.getColumnIndex()){
+                if (maxIndex < cell.getColumnIndex()) {
                     maxIndex = cell.getColumnIndex();
                 }
 
